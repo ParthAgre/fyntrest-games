@@ -40,7 +40,7 @@ export class StorageService {
     }
   }
 
-  static saveGame(isWin: boolean, score: number, time: number, moves: number, name: string = 'Player', difficulty: Difficulty = 'hard') {
+  static saveGame(isWin: boolean, score: number, time: number, moves: number, name: string = 'Player', email: string = '', difficulty: Difficulty = 'hard') {
     const stats = this.getStatistics();
     
     stats.gamesPlayed += 1;
@@ -60,6 +60,7 @@ export class StorageService {
 
     const newEntry: LeaderboardEntry = {
       name,
+      email,
       score,
       time,
       moves,

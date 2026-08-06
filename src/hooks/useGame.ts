@@ -13,6 +13,7 @@ export const useGame = (
   stopTimer: () => void,
   resetTimer: () => void,
   playerName: string,
+  playerEmail: string,
   difficulty: Difficulty
 ) => {
   const [cards, setCards] = useState<CardData[]>([]);
@@ -83,18 +84,19 @@ export const useGame = (
       setIsGameOver(true);
       const finalScore = calculateScore(false, matchedPairIds.length, moves, wrongAttempts, timeElapsed);
       setScore(finalScore);
-      StorageService.saveGame(false, finalScore, timeElapsed, moves, playerName, difficulty);
+      StorageService.saveGame(false, finalScore, timeElapsed, moves, playerName, playerEmail, difficulty);
       
       LeaderboardService.submitScore({
         game: `memory-${difficulty}`,
         player_name: playerName,
+        player_email: playerEmail,
         score: finalScore,
         time_taken: timeElapsed,
         moves,
         mistakes: wrongAttempts
       });
     }
-  }, [lives, isGameOver, stopTimer, timeElapsed, moves, wrongAttempts, playerName, difficulty]);
+  }, [lives, isGameOver, stopTimer, timeElapsed, moves, wrongAttempts, playerName, playerEmail, difficulty]);
 
   useEffect(() => {
     // Total pairs = cards.length / 2 (since deck is built by pairs)
@@ -103,18 +105,19 @@ export const useGame = (
       setIsGameWon(true);
       const finalScore = calculateScore(true, matchedPairIds.length, moves, wrongAttempts, timeElapsed);
       setScore(finalScore);
-      StorageService.saveGame(true, finalScore, timeElapsed, moves, playerName, difficulty);
+      StorageService.saveGame(true, finalScore, timeElapsed, moves, playerName, playerEmail, difficulty);
       
       LeaderboardService.submitScore({
         game: `memory-${difficulty}`,
         player_name: playerName,
+        player_email: playerEmail,
         score: finalScore,
         time_taken: timeElapsed,
         moves,
         mistakes: wrongAttempts
       });
     }
-  }, [matchedPairIds, cards.length, isGameWon, stopTimer, moves, wrongAttempts, timeElapsed, playerName, difficulty]);
+  }, [matchedPairIds, cards.length, isGameWon, stopTimer, moves, wrongAttempts, timeElapsed, playerName, playerEmail, difficulty]);
 
   const handleCardClick = (cardId: string) => {
     if (isProcessing || isGameOver || isGameWon) return;

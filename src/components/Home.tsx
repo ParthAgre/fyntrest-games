@@ -6,18 +6,19 @@ import { Leaderboard } from './Leaderboard';
 import { Difficulty } from '../types/game';
 
 interface HomeProps {
-  onStartGame: (name: string, difficulty: Difficulty) => void;
+  onStartGame: (name: string, email: string, difficulty: Difficulty) => void;
 }
 
 export const Home = ({ onStartGame }: HomeProps) => {
   const [isHowToPlayOpen, setIsHowToPlayOpen] = useState(false);
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false);
   const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [difficulty, setDifficulty] = useState<Difficulty>('hard');
 
   const handleStart = () => {
-    if (!name.trim()) return;
-    onStartGame(name.trim(), difficulty);
+    if (!name.trim() || !email.trim()) return;
+    onStartGame(name.trim(), email.trim(), difficulty);
   };
 
   return (
@@ -55,9 +56,17 @@ export const Home = ({ onStartGame }: HomeProps) => {
             placeholder="Enter your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleStart()}
             className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 px-6 text-xl text-white placeholder-white/50 focus:outline-none focus:border-fyntrest-emerald focus:ring-2 focus:ring-fyntrest-emerald/50 transition-all text-center font-bold"
             maxLength={15}
+          />
+
+          <input
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleStart()}
+            className="w-full bg-white/10 border border-white/20 rounded-2xl py-4 px-6 text-xl text-white placeholder-white/50 focus:outline-none focus:border-fyntrest-emerald focus:ring-2 focus:ring-fyntrest-emerald/50 transition-all text-center font-bold"
           />
           
           <div className="flex bg-white/5 p-1 rounded-2xl border border-white/10">
@@ -86,12 +95,12 @@ export const Home = ({ onStartGame }: HomeProps) => {
 
         <div className="flex flex-col gap-4 w-full max-w-md">
           <motion.button
-            whileHover={name.trim() ? { scale: 1.05 } : {}}
-            whileTap={name.trim() ? { scale: 0.95 } : {}}
+            whileHover={name.trim() && email.trim() ? { scale: 1.05 } : {}}
+            whileTap={name.trim() && email.trim() ? { scale: 0.95 } : {}}
             onClick={handleStart}
-            disabled={!name.trim()}
+            disabled={!name.trim() || !email.trim()}
             className={`w-full font-bold text-lg py-4 px-8 rounded-2xl flex items-center justify-center gap-2 transition-all min-h-[64px] ${
-              name.trim()
+              name.trim() && email.trim()
                 ? 'bg-gradient-to-r from-fyntrest-emerald to-emerald-600 hover:from-emerald-500 hover:to-emerald-400 text-white shadow-[0_0_20px_rgba(16,185,129,0.4)]'
                 : 'bg-white/10 text-white/30 cursor-not-allowed border border-white/10'
             }`}

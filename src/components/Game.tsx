@@ -10,11 +10,12 @@ import { Difficulty } from '../types/game';
 
 interface GameProps {
   playerName: string;
+  playerEmail: string;
   difficulty: Difficulty;
   onGoHome: () => void;
 }
 
-export const Game = ({ playerName, difficulty, onGoHome }: GameProps) => {
+export const Game = ({ playerName, playerEmail, difficulty, onGoHome }: GameProps) => {
   const { timeElapsed, startTimer, stopTimer, resetTimer } = useTimer();
   const {
     cards,
@@ -33,7 +34,7 @@ export const Game = ({ playerName, difficulty, onGoHome }: GameProps) => {
     startPreview,
     hasStartedPreview,
     totalPairs
-  } = useGame(timeElapsed, startTimer, stopTimer, resetTimer, playerName, difficulty);
+  } = useGame(timeElapsed, startTimer, stopTimer, resetTimer, playerName, playerEmail, difficulty);
 
   return (
     <div className="w-full h-screen flex flex-col items-center bg-fyntrest-darker relative">

@@ -6,15 +6,17 @@ import { Difficulty } from './types/game';
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playerName, setPlayerName] = useState('');
+  const [playerEmail, setPlayerEmail] = useState('');
   const [difficulty, setDifficulty] = useState<Difficulty>('hard');
 
   return (
     <div className="w-full min-h-screen bg-fyntrest-darker text-white selection:bg-fyntrest-emerald/30">
       {isPlaying ? (
-        <Game playerName={playerName} difficulty={difficulty} onGoHome={() => setIsPlaying(false)} />
+        <Game playerName={playerName} playerEmail={playerEmail} difficulty={difficulty} onGoHome={() => setIsPlaying(false)} />
       ) : (
-        <Home onStartGame={(name, diff) => {
+        <Home onStartGame={(name, email, diff) => {
           setPlayerName(name);
+          setPlayerEmail(email);
           setDifficulty(diff);
           setIsPlaying(true);
         }} />

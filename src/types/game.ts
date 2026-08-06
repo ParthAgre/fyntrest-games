@@ -22,6 +22,7 @@ export interface GameState {
 
 export interface LeaderboardEntry {
   name: string;
+  email: string;
   score: number;
   time: number;
   moves: number;
@@ -32,6 +33,7 @@ export interface SupabaseLeaderboardRow {
   id: string;
   game: string;
   player_name: string;
+  player_email: string;
   score: number;
   time_taken: number;
   moves: number;
