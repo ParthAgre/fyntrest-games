@@ -28,7 +28,7 @@ export const Modal = ({ isOpen, onClose, title, children, showCloseButton = fals
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg glass-panel bg-gradient-to-b from-white/10 to-white/5 border border-white/20 rounded-3xl shadow-2xl p-6 md:p-8 overflow-hidden"
+            className="relative w-full max-w-lg glass-panel bg-gradient-to-b from-white/10 to-white/5 border border-white/20 rounded-3xl shadow-2xl p-6 md:p-8 max-h-[90vh] overflow-y-auto custom-scrollbar"
           >
             {/* Background Glow */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-fyntrest-emerald/20 blur-[60px] rounded-full pointer-events-none" />

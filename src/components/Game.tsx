@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RotateCcw, Home as HomeIcon } from 'lucide-react';
 import { Header } from './Header';
@@ -36,6 +37,8 @@ export const Game = ({ playerName, playerEmail, difficulty, onGoHome }: GameProp
     totalPairs
   } = useGame(timeElapsed, startTimer, stopTimer, resetTimer, playerName, playerEmail, difficulty);
 
+  const [showInstaPopup, setShowInstaPopup] = useState(false);
+
   return (
     <div className="w-full h-screen flex flex-col items-center bg-fyntrest-darker relative">
       <Header
@@ -62,7 +65,7 @@ export const Game = ({ playerName, playerEmail, difficulty, onGoHome }: GameProp
       </main>
 
       {/* Win Modal */}
-      <Modal isOpen={isGameWon} title="🎉 Currency Master!">
+      <Modal isOpen={isGameWon && !showInstaPopup} title="🎉 Currency Master!">
         <div className="space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div className="glass-panel p-4 rounded-2xl">
@@ -84,7 +87,10 @@ export const Game = ({ playerName, playerEmail, difficulty, onGoHome }: GameProp
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={initGame}
+              onClick={() => {
+                setShowInstaPopup(false);
+                initGame();
+              }}
               className="flex-1 bg-gradient-to-r from-fyntrest-emerald to-emerald-600 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold text-lg py-4 rounded-2xl flex items-center justify-center gap-2"
             >
               <RotateCcw className="w-5 h-5" />
@@ -94,18 +100,17 @@ export const Game = ({ playerName, playerEmail, difficulty, onGoHome }: GameProp
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={onGoHome}
+              onClick={() => setShowInstaPopup(true)}
               className="flex-1 glass-panel hover:bg-white/20 text-white font-bold text-lg py-4 rounded-2xl flex items-center justify-center gap-2 transition-colors"
             >
-              <HomeIcon className="w-5 h-5" />
-              Home
+              Next
             </motion.button>
           </div>
         </div>
       </Modal>
 
       {/* Lose Modal */}
-      <Modal isOpen={isGameOver && !isGameWon} title="💸 Better Luck Next Time!">
+      <Modal isOpen={isGameOver && !isGameWon && !showInstaPopup} title="💸 Better Luck Next Time!">
         <div className="space-y-6">
           <p className="text-lg text-white/90">
             World currencies can be tricky! You've run out of lives.
@@ -131,7 +136,10 @@ export const Game = ({ playerName, playerEmail, difficulty, onGoHome }: GameProp
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={initGame}
+              onClick={() => {
+                setShowInstaPopup(false);
+                initGame();
+              }}
               className="flex-1 bg-gradient-to-r from-fyntrest-blue to-blue-600 hover:from-blue-500 hover:to-blue-400 text-white font-bold text-lg py-4 rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(59,130,246,0.4)]"
             >
               <RotateCcw className="w-5 h-5" />
@@ -141,13 +149,31 @@ export const Game = ({ playerName, playerEmail, difficulty, onGoHome }: GameProp
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={onGoHome}
+              onClick={() => setShowInstaPopup(true)}
               className="flex-1 glass-panel hover:bg-white/20 text-white font-bold text-lg py-4 rounded-2xl flex items-center justify-center gap-2 transition-colors"
             >
-              <HomeIcon className="w-5 h-5" />
-              Home
+              Next
             </motion.button>
           </div>
+        </div>
+      </Modal>
+
+      {/* Insta Popup Modal */}
+      <Modal isOpen={showInstaPopup} title="">
+        <div className="space-y-6 flex flex-col items-center">
+          <div className="w-full max-w-sm flex justify-center rounded-2xl overflow-hidden shadow-2xl border border-white/20 bg-white/5">
+            <img src="/Fyntrest_insta.png" alt="Follow Fyntrest" className="w-full h-auto object-contain" />
+          </div>
+          
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={onGoHome}
+            className="w-full glass-panel hover:bg-white/20 text-white font-bold text-xl py-4 px-8 rounded-2xl flex items-center justify-center gap-3 transition-colors mt-4"
+          >
+            <HomeIcon className="w-6 h-6" />
+            Home
+          </motion.button>
         </div>
       </Modal>
 
