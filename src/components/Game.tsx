@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { RotateCcw, Home as HomeIcon } from 'lucide-react';
 import { Header } from './Header';
@@ -33,8 +32,7 @@ export const Game = ({ playerName, difficulty, onGoHome }: GameProps) => {
     initGame,
     startPreview,
     hasStartedPreview,
-    totalPairs,
-    wrongAttempts
+    totalPairs
   } = useGame(timeElapsed, startTimer, stopTimer, resetTimer, playerName, difficulty);
 
   return (

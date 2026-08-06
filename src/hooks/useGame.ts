@@ -80,7 +80,7 @@ export const useGame = (
     if (lives === 0 && !isGameOver) {
       stopTimer();
       setIsGameOver(true);
-      const finalScore = calculateScore(moves, wrongAttempts, timeElapsed);
+      const finalScore = calculateScore(false, matchedPairIds.length, moves, wrongAttempts, timeElapsed);
       setScore(finalScore);
       StorageService.saveGame(false, finalScore, timeElapsed, moves, playerName, difficulty);
     }
@@ -91,7 +91,7 @@ export const useGame = (
     if (cards.length > 0 && matchedPairIds.length === cards.length / 2 && !isGameWon) {
       stopTimer();
       setIsGameWon(true);
-      const finalScore = calculateScore(moves, wrongAttempts, timeElapsed);
+      const finalScore = calculateScore(true, matchedPairIds.length, moves, wrongAttempts, timeElapsed);
       setScore(finalScore);
       StorageService.saveGame(true, finalScore, timeElapsed, moves, playerName, difficulty);
     }
