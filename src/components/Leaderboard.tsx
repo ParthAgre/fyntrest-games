@@ -1,23 +1,48 @@
-import { useEffect, useState } from 'react';
-import { StorageService } from '../services/storage';
-import { LeaderboardEntry, Difficulty } from '../types/game';
-import { Trophy, Clock, Move, Trash2 } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
+import { LeaderboardService } from '../services/leaderboard';
+import { SupabaseLeaderboardRow, Difficulty } from '../types/game';
+import { Trophy, Clock, Move, Trash2, Loader2 } from 'lucide-react';
 
 interface LeaderboardProps {
   defaultTab?: Difficulty;
 }
 
 export const Leaderboard = ({ defaultTab = 'hard' }: LeaderboardProps = {}) => {
-  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [entries, setEntries] = useState<SupabaseLeaderboardRow[]>([]);
   const [activeTab, setActiveTab] = useState<Difficulty>(defaultTab);
+  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    setEntries(StorageService.getLeaderboard(activeTab));
+  const fetchScores = useCallback(async () => {
+    setIsLoading(true);
+    const gameId = `memory-${activeTab}`;
+    const topScores = await LeaderboardService.getTopScoresByGame(gameId);
+    setEntries(topScores);
+    setIsLoading(false);
   }, [activeTab]);
 
-  const handleDelete = (index: number) => {
-    StorageService.deleteEntry(index, activeTab);
-    setEntries(StorageService.getLeaderboard(activeTab));
+  useEffect(() => {
+    fetchScores();
+
+    // Subscribe to realtime updates
+    const subscription = LeaderboardService.subscribeToUpdates(() => {
+      fetchScores();
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [fetchScores]);
+
+  const handleDelete = async (id: string) => {
+    // Optimistic UI update
+    setEntries(prev => prev.filter(entry => entry.id !== id));
+    const success = await LeaderboardService.deleteScore(id);
+    
+    // If RLS blocks the deletion, reset the UI to match the database
+    if (!success) {
+      alert("You don't have permission to delete this score.");
+      fetchScores();
+    }
   };
 
   return (
@@ -46,7 +71,11 @@ export const Leaderboard = ({ defaultTab = 'hard' }: LeaderboardProps = {}) => {
         </button>
       </div>
 
-      {entries.length === 0 ? (
+      {isLoading ? (
+        <div className="flex justify-center items-center py-8">
+          <Loader2 className="w-8 h-8 text-fyntrest-emerald animate-spin" />
+        </div>
+      ) : entries.length === 0 ? (
         <div className="text-center text-white/70 py-8">
           No scores yet for {activeTab} mode.
         </div>
@@ -54,7 +83,7 @@ export const Leaderboard = ({ defaultTab = 'hard' }: LeaderboardProps = {}) => {
         <div className="space-y-3">
           {entries.map((entry, index) => (
             <div 
-              key={index} 
+              key={entry.id} 
               className="flex items-center justify-between p-3 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
             >
               <div className="flex items-center gap-4">
@@ -65,7 +94,7 @@ export const Leaderboard = ({ defaultTab = 'hard' }: LeaderboardProps = {}) => {
                 }`}>
                   #{index + 1}
                 </span>
-                <span className="font-medium">{entry.name}</span>
+                <span className="font-medium">{entry.player_name}</span>
               </div>
               
               <div className="flex gap-4 items-center">
@@ -78,7 +107,7 @@ export const Leaderboard = ({ defaultTab = 'hard' }: LeaderboardProps = {}) => {
                   <div className="flex items-center gap-3 text-xs text-white/50">
                     <div className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      <span>{entry.time}s</span>
+                      <span>{entry.time_taken}s</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Move className="w-3 h-3" />
@@ -88,7 +117,7 @@ export const Leaderboard = ({ defaultTab = 'hard' }: LeaderboardProps = {}) => {
                 </div>
                 
                 <button
-                  onClick={() => handleDelete(index)}
+                  onClick={() => handleDelete(entry.id)}
                   className="p-2 bg-red-500/10 hover:bg-red-500/30 text-red-400 hover:text-red-300 rounded-lg transition-colors border border-red-500/20 shadow-sm ml-2"
                   title="Delete Entry"
                 >

@@ -28,6 +28,19 @@ export interface LeaderboardEntry {
   date: string;
 }
 
+export interface SupabaseLeaderboardRow {
+  id: string;
+  game: string;
+  player_name: string;
+  score: number;
+  time_taken: number;
+  moves: number;
+  mistakes: number;
+  created_at: string;
+}
+
+export type InsertScoreDTO = Omit<SupabaseLeaderboardRow, 'id' | 'created_at'>;
+
 export interface GameStatistics {
   bestScore: number;
   bestTime: number;

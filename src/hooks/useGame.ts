@@ -3,6 +3,7 @@ import { CardData, Difficulty } from '../types/game';
 import { createDeck } from '../utils/shuffle';
 import { calculateScore } from '../utils/score';
 import { StorageService } from '../services/storage';
+import { LeaderboardService } from '../services/leaderboard';
 
 const MATCH_DELAY = 700;
 
@@ -83,6 +84,15 @@ export const useGame = (
       const finalScore = calculateScore(false, matchedPairIds.length, moves, wrongAttempts, timeElapsed);
       setScore(finalScore);
       StorageService.saveGame(false, finalScore, timeElapsed, moves, playerName, difficulty);
+      
+      LeaderboardService.submitScore({
+        game: `memory-${difficulty}`,
+        player_name: playerName,
+        score: finalScore,
+        time_taken: timeElapsed,
+        moves,
+        mistakes: wrongAttempts
+      });
     }
   }, [lives, isGameOver, stopTimer, timeElapsed, moves, wrongAttempts, playerName, difficulty]);
 
@@ -94,6 +104,15 @@ export const useGame = (
       const finalScore = calculateScore(true, matchedPairIds.length, moves, wrongAttempts, timeElapsed);
       setScore(finalScore);
       StorageService.saveGame(true, finalScore, timeElapsed, moves, playerName, difficulty);
+      
+      LeaderboardService.submitScore({
+        game: `memory-${difficulty}`,
+        player_name: playerName,
+        score: finalScore,
+        time_taken: timeElapsed,
+        moves,
+        mistakes: wrongAttempts
+      });
     }
   }, [matchedPairIds, cards.length, isGameWon, stopTimer, moves, wrongAttempts, timeElapsed, playerName, difficulty]);
 
